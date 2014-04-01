@@ -27,13 +27,13 @@ fn main() {
   let a = 10;
   dump(iterator!(a * i for i in range(0, 10)));
 
-  dump(iterator!(-x for x in range(-10, 10) where x <= 0));
+  dump(iterator!(-x for x in range(-10, 10) if x <= 0));
 
   dump(iterator!(i for i in range(0, 5)));
 
   dump(iterator!(i * j for i in range(1, 4) for j in range(1, 4)));
 
-  dump(iterator!(i + j for i in range(0, 1000) for j in range(0, 1000) where (i, j) == (999, 999)));
+  dump(iterator!(i + j for i in range(0, 1000) for j in range(0, 1000) if (i, j) == (999, 999)));
 
   let a = ~[ 1, 3, 3, 7 ];
   let b = ~[ 4, 2 ];

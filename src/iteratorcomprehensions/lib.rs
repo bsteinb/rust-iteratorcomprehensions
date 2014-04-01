@@ -23,8 +23,8 @@ pub mod macros {
 
     ```notrust
     iterator!(
-      map_expr for var_1 in gen_expr_1 [where filter_expr_1]
-      [… for var_n in gen_expr_n [where filter_expr]]
+      map_expr for var_1 in gen_expr_1 [if filter_expr_1]
+      [… for var_n in gen_expr_n [if filter_expr]]
     )
     ```
 
@@ -43,7 +43,7 @@ pub mod macros {
 
     ```notrust
     iterator!(
-      (i, j) for i in range(0,3) for j in range(0, i + 1) where (i + j) % 2 == 0
+      (i, j) for i in range(0,3) for j in range(0, i + 1) if (i + j) % 2 == 0
     )
     ```
     evaluates to an iterator that contains the elements
@@ -57,7 +57,7 @@ pub mod macros {
     (
       $map:expr
       for $var:ident in $gen:expr
-      $(where $filter:expr)*
+      $(if $filter:expr)*
     ) => (
       $gen
       $(.filter_map(|$var| { if $filter { Some($var) } else { None } }))*
@@ -66,9 +66,9 @@ pub mod macros {
     (
       $map:expr
       for $var1:ident in $gen1:expr
-      $(where $filter1:expr)*
+      $(if $filter1:expr)*
       for $var2:ident in $gen2:expr
-      $(where $filter2:expr)*
+      $(if $filter2:expr)*
     ) => (
       $gen1
       $(.filter_map(|$var1| { if $filter1 { Some($var1) } else { None } }))*
@@ -79,11 +79,11 @@ pub mod macros {
     (
       $map:expr
       for $var1:ident in $gen1:expr
-      $(where $filter1:expr)*
+      $(if $filter1:expr)*
       for $var2:ident in $gen2:expr
-      $(where $filter2:expr)*
+      $(if $filter2:expr)*
       for $var3:ident in $gen3:expr
-      $(where $filter3:expr)*
+      $(if $filter3:expr)*
     ) => (
       $gen1
       $(.filter_map(|$var1| { if $filter1 { Some($var1) } else { None } }))*
@@ -185,13 +185,13 @@ mod tests {
 
   #[test]
   fn iterator1_filter_test() {
-    let xs: ~[int] = iterator!( i for i in range(0, 3) where i % 2 == 1 ).collect();
+    let xs: ~[int] = iterator!( i for i in range(0, 3) if i % 2 == 1 ).collect();
     assert_eq!(xs, ~[1]);
   }
 
   #[test]
   fn iterator1_filter_map_test() {
-    let xs: ~[int] = iterator!( i * 2 for i in range(0, 3) where i % 2 == 1 ).collect();
+    let xs: ~[int] = iterator!( i * 2 for i in range(0, 3) if i % 2 == 1 ).collect();
     assert_eq!(xs, ~[2]);
   }
 
@@ -204,7 +204,7 @@ mod tests {
   #[test]
   fn iterator2_filter_map_test() {
     let xs: ~[int] = iterator!(
-      i / j for i in range(6, 9) for j in range(1, 4) where i % j == 0
+      i / j for i in range(6, 9) for j in range(1, 4) if i % j == 0
     ).collect();
     assert_eq!(xs, ~[6, 3, 2, 7, 8, 4]);
   }
@@ -212,7 +212,7 @@ mod tests {
   #[test]
   fn iterator2_example_test() {
     let xs: ~[(int,int)] = iterator!(
-      (i,j) for i in range(0,3) for j in range(0, i + 1) where (i + j) % 2 == 0
+      (i,j) for i in range(0,3) for j in range(0, i + 1) if (i + j) % 2 == 0
     ).collect();
     assert_eq!(xs, ~[(0,0), (1,1), (2,0), (2,2)]);
   }
@@ -229,7 +229,7 @@ mod tests {
   fn iterator3_filter_map_test() {
     let xs: ~[int] = iterator!(
       i + j + k for i in range(0, 10) for j in range(0, 10) for k in range(0, 10)
-      where i == 1 && j == 1 && k == 1
+      if i == 1 && j == 1 && k == 1
     ).collect();
     assert_eq!(xs, ~[3]);
   }
