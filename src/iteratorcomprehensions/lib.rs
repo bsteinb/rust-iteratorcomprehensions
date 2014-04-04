@@ -60,7 +60,7 @@ pub mod macros {
       $(if $filter:expr)*
     ) => (
       $gen
-      $(.filter_map(|$var| { if $filter { Some($var) } else { None } }))*
+      $(.filter(|&$var| { $filter }))*
       .map(|$var| { $map })
     );
     (
@@ -71,9 +71,9 @@ pub mod macros {
       $(if $filter2:expr)*
     ) => (
       $gen1
-      $(.filter_map(|$var1| { if $filter1 { Some($var1) } else { None } }))*
+      $(.filter(|&$var1| { $filter1 }))*
       .flat_map(|$var1| { iteratorcomprehensions::prepend1($var1, $gen2) })
-      $(.filter_map(|($var1, $var2)| { if $filter2 { Some(($var1, $var2)) } else { None } }))*
+      $(.filter(|&($var1, $var2)| { $filter2 }))*
       .map(|($var1, $var2)| { $map })
     );
     (
@@ -86,13 +86,11 @@ pub mod macros {
       $(if $filter3:expr)*
     ) => (
       $gen1
-      $(.filter_map(|$var1| { if $filter1 { Some($var1) } else { None } }))*
+      $(.filter(|&$var1| { $filter1 }))*
       .flat_map(|$var1| { iteratorcomprehensions::prepend1($var1, $gen2) })
-      $(.filter_map(|($var1, $var2)| { if $filter2 { Some(($var1, $var2)) } else { None } }))*
+      $(.filter(|&($var1, $var2)| { $filter2 }))*
       .flat_map(|($var1, $var2)| { iteratorcomprehensions::prepend2($var1, $var2, $gen3) })
-      $(.filter_map(
-        |($var1, $var2, $var3)| { if $filter3 { Some(($var1, $var2, $var3)) } else { None } }
-      ))*
+      $(.filter(|&($var1, $var2, $var3)| { $filter3 }))*
       .map(|($var1, $var2, $var3)| { $map })
     );
   )
