@@ -2,6 +2,7 @@
 
 #[crate_id = "examples"];
 
+#[cfg(not(test))]
 #[phase(syntax,link)]
 extern crate iteratorcomprehensions;
 

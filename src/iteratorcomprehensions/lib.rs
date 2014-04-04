@@ -10,14 +10,13 @@
 #[crate_id = "iteratorcomprehensions#0.1"];
 #[crate_type = "lib"];
 
-#[cfg(not(test))]
 pub use prepend::{prepend1,Prepend1,prepend2,Prepend2};
 
 /**
   Contains the macros that implement the comprehension syntax.
 */
-#[cfg(not(test))]
 pub mod macros {
+  #[macro_escape];
   /**
     The `iterator!()` macro implements the following comprehension syntax:
 
@@ -99,7 +98,6 @@ pub mod macros {
 /**
   Contains the types `Prepend1`… `Prependn` as well as the convenience functions `prepend1`… `prependn`.
 */
-#[cfg(not(test))]
 pub mod prepend {
   /**
     Maps each element `i` in `iter` to the tuple `(val1, i)`.
@@ -166,8 +164,7 @@ pub mod prepend {
 
 #[cfg(test)]
 mod tests {
-  #[phase(syntax,link)]
-  extern crate iteratorcomprehensions;
+  use iteratorcomprehensions = prepend; // Yikes!
 
   #[test]
   fn iterator1_test() {
