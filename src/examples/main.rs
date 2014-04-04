@@ -1,6 +1,6 @@
-#[feature(phase)];
+#![feature(phase)]
 
-#[crate_id = "examples"];
+#![crate_id = "examples"]
 
 #[cfg(not(test))]
 #[phase(syntax,link)]

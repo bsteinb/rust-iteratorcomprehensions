@@ -5,10 +5,10 @@
   the preceding positions being constant.
 */
 
-#[feature(macro_rules,phase)];
+#![feature(macro_rules,phase)]
 
-#[crate_id = "iteratorcomprehensions#0.1"];
-#[crate_type = "lib"];
+#![crate_id = "iteratorcomprehensions#0.1"]
+#![crate_type = "lib"]
 
 pub use prepend::{prepend1,Prepend1,prepend2,Prepend2};
 
@@ -16,7 +16,7 @@ pub use prepend::{prepend1,Prepend1,prepend2,Prepend2};
   Contains the macros that implement the comprehension syntax.
 */
 pub mod macros {
-  #[macro_escape];
+  #![macro_escape]
   /**
     The `iterator!()` macro implements the following comprehension syntax:
 
@@ -168,72 +168,72 @@ mod tests {
 
   #[test]
   fn iterator1_test() {
-    let xs: ~[int] = iterator!( i for i in range(0, 3) ).collect();
-    assert_eq!(xs, ~[0, 1, 2]);
+    let xs: Vec<int> = iterator!( i for i in range(0, 3) ).collect();
+    assert_eq!(xs, vec!(0, 1, 2));
   }
 
   #[test]
   fn iterator1_map_test() {
-    let xs: ~[int] = iterator!( i + 1 for i in range(0, 3) ).collect();
-    assert_eq!(xs, ~[1, 2, 3]);
+    let xs: Vec<int> = iterator!( i + 1 for i in range(0, 3) ).collect();
+    assert_eq!(xs, vec!(1, 2, 3));
   }
 
   #[test]
   fn iterator1_filter_test() {
-    let xs: ~[int] = iterator!( i for i in range(0, 3) if i % 2 == 1 ).collect();
-    assert_eq!(xs, ~[1]);
+    let xs: Vec<int> = iterator!( i for i in range(0, 3) if i % 2 == 1 ).collect();
+    assert_eq!(xs, vec!(1));
   }
 
   #[test]
   fn iterator1_filter_map_test() {
-    let xs: ~[int] = iterator!( i * 2 for i in range(0, 3) if i % 2 == 1 ).collect();
-    assert_eq!(xs, ~[2]);
+    let xs: Vec<int> = iterator!( i * 2 for i in range(0, 3) if i % 2 == 1 ).collect();
+    assert_eq!(xs, vec!(2));
   }
 
   #[test]
   fn iterator2_map_test() {
-    let xs: ~[int] = iterator!( i * j for i in range(1, 3) for j in range(2, 4) ).collect();
-    assert_eq!(xs, ~[2, 3, 4, 6]);
+    let xs: Vec<int> = iterator!( i * j for i in range(1, 3) for j in range(2, 4) ).collect();
+    assert_eq!(xs, vec!(2, 3, 4, 6));
   }
 
   #[test]
   fn iterator2_filter_map_test() {
-    let xs: ~[int] = iterator!(
+    let xs: Vec<int> = iterator!(
       i / j for i in range(6, 9) for j in range(1, 4) if i % j == 0
     ).collect();
-    assert_eq!(xs, ~[6, 3, 2, 7, 8, 4]);
+    assert_eq!(xs, vec!(6, 3, 2, 7, 8, 4));
   }
 
   #[test]
   fn iterator2_example_test() {
-    let xs: ~[(int,int)] = iterator!(
+    let xs: Vec<(int,int)> = iterator!(
       (i,j) for i in range(0,3) for j in range(0, i + 1) if (i + j) % 2 == 0
     ).collect();
-    assert_eq!(xs, ~[(0,0), (1,1), (2,0), (2,2)]);
+    assert_eq!(xs, vec!((0,0), (1,1), (2,0), (2,2)));
   }
 
   #[test]
   fn iterator3_map_test() {
-    let xs: ~[int] = iterator!(
+    let xs: Vec<int> = iterator!(
       i * j * k for i in range(1, 3) for j in range(2, 4) for k in range(3, 5)
     ).collect();
-    assert_eq!(xs, ~[6, 8, 9, 12, 12, 16, 18, 24]);
+    assert_eq!(xs, vec!(6, 8, 9, 12, 12, 16, 18, 24));
   }
 
   #[test]
   fn iterator3_filter_map_test() {
-    let xs: ~[int] = iterator!(
+    let xs: Vec<int> = iterator!(
       i + j + k for i in range(0, 10) for j in range(0, 10) for k in range(0, 10)
       if i == 1 && j == 1 && k == 1
     ).collect();
-    assert_eq!(xs, ~[3]);
+    assert_eq!(xs, vec!(3));
   }
 
   #[test]
   fn iterator3_empty_test() {
-    let xs: ~[int] = iterator!(
+    let xs: Vec<int> = iterator!(
       i * j * k for i in range(0, 2) for j in range(0, i) for k in range(0, 1)
     ).collect();
-    assert_eq!(xs, ~[0]);
+    assert_eq!(xs, vec!(0));
   }
 }
