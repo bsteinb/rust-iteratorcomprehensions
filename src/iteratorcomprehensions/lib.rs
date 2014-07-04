@@ -7,7 +7,7 @@
 
 #![feature(macro_rules,phase)]
 
-#![crate_id = "iteratorcomprehensions#0.1"]
+#![crate_id = "iteratorcomprehensions#0.1.0"]
 #![crate_type = "lib"]
 
 pub use prepend::{prepend1,Prepend1,prepend2,Prepend2};

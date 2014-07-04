@@ -1,0 +1,15 @@
+[package]
+
+name = "rust-iteratorcomprehensions"
+version = "0.1.0"
+authors = [ "benedikt.steinbusch@googlemail.com" ]
+
+[[bin]]
+
+name = "examples"
+path = "src/examples/main.rs"
+
+[[lib]]
+
+name = "iteratorcomprehensions"
+path = "src/iteratorcomprehensions/lib.rs"
