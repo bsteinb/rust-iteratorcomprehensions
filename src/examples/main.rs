@@ -40,7 +40,6 @@ fn main() {
   let b = vec!( 4i, 2i );
   dump(iterator!( (i, j) for i in b.iter() for j in a.iter() ));
 
-  dump(range(0i, 0i));
   dump(iterator!( (i, j) for i in range(0i, 0i) for j in range(0i, 1i) ));
 
   dump(iterator!( (i, j) for i in range(1i, 4i) for j in range(1i, i + 1i) ));
