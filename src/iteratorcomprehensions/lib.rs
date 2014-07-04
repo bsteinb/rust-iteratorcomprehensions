@@ -42,7 +42,7 @@ pub mod macros {
 
     ```notrust
     iterator!(
-      (i, j) for i in range(0,3) for j in range(0, i + 1) if (i + j) % 2 == 0
+      (i, j) for i in range(0i, 3i) for j in range(0i, i + 1i) if (i + j) % 2 == 0
     )
     ```
     evaluates to an iterator that contains the elements
