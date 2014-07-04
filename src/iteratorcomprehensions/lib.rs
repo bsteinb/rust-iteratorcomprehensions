@@ -168,38 +168,38 @@ mod tests {
 
   #[test]
   fn iterator1_test() {
-    let xs: Vec<int> = iterator!( i for i in range(0, 3) ).collect();
+    let xs: Vec<int> = iterator!( i for i in range(0i, 3i) ).collect();
     assert_eq!(xs, vec!(0, 1, 2));
   }
 
   #[test]
   fn iterator1_map_test() {
-    let xs: Vec<int> = iterator!( i + 1 for i in range(0, 3) ).collect();
+    let xs: Vec<int> = iterator!( i + 1 for i in range(0i, 3i) ).collect();
     assert_eq!(xs, vec!(1, 2, 3));
   }
 
   #[test]
   fn iterator1_filter_test() {
-    let xs: Vec<int> = iterator!( i for i in range(0, 3) if i % 2 == 1 ).collect();
+    let xs: Vec<int> = iterator!( i for i in range(0i, 3i) if i % 2 == 1 ).collect();
     assert_eq!(xs, vec!(1));
   }
 
   #[test]
   fn iterator1_filter_map_test() {
-    let xs: Vec<int> = iterator!( i * 2 for i in range(0, 3) if i % 2 == 1 ).collect();
+    let xs: Vec<int> = iterator!( i * 2 for i in range(0i, 3i) if i % 2 == 1 ).collect();
     assert_eq!(xs, vec!(2));
   }
 
   #[test]
   fn iterator2_map_test() {
-    let xs: Vec<int> = iterator!( i * j for i in range(1, 3) for j in range(2, 4) ).collect();
+    let xs: Vec<int> = iterator!( i * j for i in range(1i, 3i) for j in range(2i, 4i) ).collect();
     assert_eq!(xs, vec!(2, 3, 4, 6));
   }
 
   #[test]
   fn iterator2_filter_map_test() {
     let xs: Vec<int> = iterator!(
-      i / j for i in range(6, 9) for j in range(1, 4) if i % j == 0
+      i / j for i in range(6i, 9i) for j in range(1i, 4i) if i % j == 0
     ).collect();
     assert_eq!(xs, vec!(6, 3, 2, 7, 8, 4));
   }
@@ -207,15 +207,15 @@ mod tests {
   #[test]
   fn iterator2_example_test() {
     let xs: Vec<(int,int)> = iterator!(
-      (i,j) for i in range(0,3) for j in range(0, i + 1) if (i + j) % 2 == 0
+      (i,j) for i in range(0i, 3i) for j in range(0i, i + 1i) if (i + j) % 2 == 0
     ).collect();
-    assert_eq!(xs, vec!((0,0), (1,1), (2,0), (2,2)));
+    assert_eq!(xs, vec!((0, 0), (1, 1), (2, 0), (2, 2)));
   }
 
   #[test]
   fn iterator3_map_test() {
     let xs: Vec<int> = iterator!(
-      i * j * k for i in range(1, 3) for j in range(2, 4) for k in range(3, 5)
+      i * j * k for i in range(1i, 3i) for j in range(2i, 4i) for k in range(3i, 5i)
     ).collect();
     assert_eq!(xs, vec!(6, 8, 9, 12, 12, 16, 18, 24));
   }
@@ -223,7 +223,7 @@ mod tests {
   #[test]
   fn iterator3_filter_map_test() {
     let xs: Vec<int> = iterator!(
-      i + j + k for i in range(0, 10) for j in range(0, 10) for k in range(0, 10)
+      i + j + k for i in range(0i, 10i) for j in range(0i, 10i) for k in range(0i, 10i)
       if i == 1 && j == 1 && k == 1
     ).collect();
     assert_eq!(xs, vec!(3));
@@ -232,7 +232,7 @@ mod tests {
   #[test]
   fn iterator3_empty_test() {
     let xs: Vec<int> = iterator!(
-      i * j * k for i in range(0, 2) for j in range(0, i) for k in range(0, 1)
+      i * j * k for i in range(0i, 2i) for j in range(0i, i) for k in range(0i, 1i)
     ).collect();
     assert_eq!(xs, vec!(0));
   }
