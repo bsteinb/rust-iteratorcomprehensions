@@ -1,22 +1,173 @@
 /*!
   This module provides the syntax extension `iterator!()` that enables mapping, filtering and
-  nesting of iterators using a comprehension syntax as well as the associated types `Prepend1`…
-  `Prependn` which return the elements of an iterator in the last position of a 1…n element tuple,
-  the preceding positions being constant.
+  nesting of iterators using a comprehension syntax.
 */
 
 #![feature(macro_rules,phase)]
 
-#![crate_id = "iteratorcomprehensions#0.1.0"]
+#![crate_id = "iteratorcomprehensions#0.2.0"]
 #![crate_type = "lib"]
-
-pub use prepend::{prepend1,Prepend1,prepend2,Prepend2};
 
 /**
   Contains the macros that implement the comprehension syntax.
 */
 pub mod macros {
   #![macro_escape]
+
+  /**
+    Turns a comma separated list of identifiers into a nested tuple pattern.
+
+    ```notrust
+    arglist(i) -> i
+    arglist(i, j) -> (j, i)
+    arglist(i, j, k) -> (k, (j, i))
+    ```
+  */
+  #[macro_export]
+  macro_rules! arglist(
+    (
+      $var:ident
+    ) => (
+      $var
+    );
+    (
+      $var:ident $(, $vars:ident)+
+    ) => (
+      (arglist!($($vars),+), $var)
+    );
+  )
+
+  /**
+    Main implementation of the `iterator!()` extension.
+  */
+  #[macro_export]
+  macro_rules! iterator_tail(
+    (
+      (),
+      (),
+      (
+        $map:expr
+        for $var:ident in $gen:expr
+        $(
+          for $vars:ident in $gens:expr
+          $(if $filters:expr)*
+        )*
+      )
+    ) => (
+      iterator_tail!(
+        (
+          $gen
+        ),
+        ($var),
+        (
+          $map
+          $(
+            for $vars in $gens
+            $(if $filters)*
+          )*
+        )
+      )
+    );
+    (
+      (),
+      (),
+      (
+        $map:expr
+        for $var:ident in $gen:expr
+        if $filter:expr
+        $(
+          for $vars:ident in $gens:expr
+          $(if $filters:expr)*
+        )*
+      )
+    ) => (
+      iterator_tail!(
+        (
+          $gen
+          .filter(|&$var| { $filter } )
+        ),
+        ($var),
+        (
+          $map
+          $(
+            for $vars in $gens
+            $(if $filters)*
+          )*
+        )
+      )
+    );
+    (
+      ($head:expr),
+      ($($envs:ident),+),
+      (
+        $map:expr
+        for $var:ident in $gen:expr
+        $(
+          for $vars:ident in $gens:expr
+          $(if $filters:expr)*
+        )*
+      )
+    ) => (
+      iterator_tail!(
+        (
+          $head
+          .flat_map(|arglist!($($envs),+)| {
+            ::std::iter::Repeat::new(arglist!($($envs),+)).zip($gen)
+          })
+        ),
+        ($var $(, $envs)*),
+        (
+          $map
+          $(
+            for $vars in $gens
+            $(if $filters)*
+          )*
+        )
+      )
+    );
+    (
+      ($head:expr),
+      ($($envs:ident),+),
+      (
+        $map:expr
+        for $var:ident in $gen:expr
+        if $filter:expr
+        $(
+          for $vars:ident in $gens:expr
+          $(if $filters:expr)*
+        )*
+      )
+    ) => (
+      iterator_tail!(
+        (
+          $head
+          .flat_map(|arglist!($($envs),+)| {
+            ::std::iter::Repeat::new(arglist!($($envs),+)).zip($gen)
+          })
+          .filter(|&arglist!($var $(, $envs)+)| { $filter })
+        ),
+        ($var $(, $envs)*),
+        (
+          $map
+          $(
+            for $vars in $gens
+            $(if $filters)*
+          )*
+        )
+      )
+    );
+    (
+      ($head:expr),
+      ($($envs:ident),+),
+      (
+        $map:expr
+      )
+    ) => (
+      $head
+      .map(|arglist!($($envs),+)| { $map })
+    );
+  )
+
   /**
     The `iterator!()` macro implements the following comprehension syntax:
 
@@ -55,117 +206,28 @@ pub mod macros {
   macro_rules! iterator(
     (
       $map:expr
-      for $var:ident in $gen:expr
-      $(if $filter:expr)*
+      $(
+        for $vars:ident in $gens:expr
+        $(if $filters:expr)*
+      )+
     ) => (
-      $gen
-      $(.filter(|&$var| { $filter }))*
-      .map(|$var| { $map })
-    );
-    (
-      $map:expr
-      for $var1:ident in $gen1:expr
-      $(if $filter1:expr)*
-      for $var2:ident in $gen2:expr
-      $(if $filter2:expr)*
-    ) => (
-      $gen1
-      $(.filter(|&$var1| { $filter1 }))*
-      .flat_map(|$var1| { iteratorcomprehensions::prepend1($var1, $gen2) })
-      $(.filter(|&($var1, $var2)| { $filter2 }))*
-      .map(|($var1, $var2)| { $map })
-    );
-    (
-      $map:expr
-      for $var1:ident in $gen1:expr
-      $(if $filter1:expr)*
-      for $var2:ident in $gen2:expr
-      $(if $filter2:expr)*
-      for $var3:ident in $gen3:expr
-      $(if $filter3:expr)*
-    ) => (
-      $gen1
-      $(.filter(|&$var1| { $filter1 }))*
-      .flat_map(|$var1| { iteratorcomprehensions::prepend1($var1, $gen2) })
-      $(.filter(|&($var1, $var2)| { $filter2 }))*
-      .flat_map(|($var1, $var2)| { iteratorcomprehensions::prepend2($var1, $var2, $gen3) })
-      $(.filter(|&($var1, $var2, $var3)| { $filter3 }))*
-      .map(|($var1, $var2, $var3)| { $map })
+      iterator_tail!(
+        (),
+        (),
+        (
+          $map
+          $(
+            for $vars in $gens
+            $(if $filters)*
+          )+
+        )
+      )
     );
   )
 }
 
-/**
-  Contains the types `Prepend1`… `Prependn` as well as the convenience functions `prepend1`… `prependn`.
-*/
-pub mod prepend {
-  /**
-    Maps each element `i` in `iter` to the tuple `(val1, i)`.
-  */
-  pub struct Prepend1<T1, T, It> {
-    iter: It,
-    val1: T1
-  }
-
-  impl<T1: Clone, T, It: Iterator<T>> Prepend1<T1, T, It> {
-    #[inline]
-    fn new(v1: T1, it: It) -> Prepend1<T1, T, It> {
-      Prepend1 { iter: it, val1: v1 }
-    }
-  }
-
-  impl<T1: Clone, T, It: Iterator<T>> Iterator<(T1, T)> for Prepend1<T1, T, It> {
-    #[inline]
-    fn next(&mut self) -> Option<(T1, T)> {
-      self.iter.next().map(|val| (self.val1.clone(), val))
-    }
-  }
-
-  /**
-    Constructs a new `Prepend1`.
-  */
-  #[inline]
-  pub fn prepend1<T1: Clone, T, It: Iterator<T>>(v1: T1, it: It) -> Prepend1<T1, T, It> {
-    Prepend1::new(v1, it)
-  }
-
-  /**
-    Maps each element `i` in `iter` to the tuple `(val1, val2, i)`.
-  */
-  pub struct Prepend2<T1, T2, T, It> {
-    iter: It,
-    val1: T1,
-    val2: T2
-  }
-
-  impl<T1: Clone, T2: Clone, T, It: Iterator<T>> Prepend2<T1, T2, T, It> {
-    #[inline]
-    fn new(v1: T1, v2: T2, it: It) -> Prepend2<T1, T2, T, It> {
-      Prepend2 { iter: it, val1: v1, val2: v2 }
-    }
-  }
-
-  impl<T1: Clone, T2: Clone, T, It: Iterator<T>> Iterator<(T1, T2, T)> for Prepend2<T1, T2, T, It> {
-    #[inline]
-    fn next(&mut self) -> Option<(T1, T2, T)> {
-      self.iter.next().map(|val| (self.val1.clone(), self.val2.clone(), val))
-    }
-  }
-
-  /**
-    Constructs a new `Prepend2`.
-  */
-  #[inline]
-  pub fn prepend2<T1: Clone, T2: Clone, T, It: Iterator<T>>(v1: T1, v2: T2, it: It)
-  -> Prepend2<T1, T2, T, It> {
-    Prepend2::new(v1, v2, it)
-  }
-}
-
 #[cfg(test)]
 mod tests {
-  use iteratorcomprehensions = prepend; // Yikes!
-
   #[test]
   fn iterator1_test() {
     let xs: Vec<int> = iterator!( i for i in range(0i, 3i) ).collect();
@@ -207,26 +269,29 @@ mod tests {
   #[test]
   fn iterator2_example_test() {
     let xs: Vec<(int,int)> = iterator!(
-      (i,j) for i in range(0i, 3i) for j in range(0i, i + 1i) if (i + j) % 2 == 0
+      (i, j) for i in range(0i, 3i) for j in range(0i, i + 1i) if (i + j) % 2 == 0
     ).collect();
     assert_eq!(xs, vec!((0, 0), (1, 1), (2, 0), (2, 2)));
   }
 
   #[test]
   fn iterator3_map_test() {
+    let a = vec!(1i, 2i);
+    let b = vec!(3i, 5i);
+    let c = vec!(7i, 11i);
     let xs: Vec<int> = iterator!(
-      i * j * k for i in range(1i, 3i) for j in range(2i, 4i) for k in range(3i, 5i)
+      *i * *j * *k for i in a.iter() for j in b.iter() for k in c.iter()
     ).collect();
-    assert_eq!(xs, vec!(6, 8, 9, 12, 12, 16, 18, 24));
+    assert_eq!(xs, vec!(21, 33, 35, 55, 42, 66, 70, 110));
   }
 
   #[test]
   fn iterator3_filter_map_test() {
-    let xs: Vec<int> = iterator!(
-      i + j + k for i in range(0i, 10i) for j in range(0i, 10i) for k in range(0i, 10i)
-      if i == 1 && j == 1 && k == 1
+    let xs: Vec<(int, int, int)> = iterator!(
+      (i, j, k) for i in range(0i, 10i) for j in range(0i, 10i) for k in range(0i, 10i)
+      if i == 1 && j == 2 && k == 3
     ).collect();
-    assert_eq!(xs, vec!(3));
+    assert_eq!(xs, vec!((1, 2, 3)));
   }
 
   #[test]
@@ -235,5 +300,21 @@ mod tests {
       i * j * k for i in range(0i, 2i) for j in range(0i, i) for k in range(0i, 1i)
     ).collect();
     assert_eq!(xs, vec!(0));
+  }
+
+  #[test]
+  fn iterator6_test() {
+    let mut xs = iterator!(
+      (i, j, k, l, m, n)
+      for i in range(0i, 5i)
+      for j in range(0i, 5i)
+      for k in range(0i, 5i)
+      for l in range(0i, 5i)
+      for m in range(0i, 5i)
+      for n in range(0i, 5i)
+    );
+    assert_eq!(xs.next().unwrap(), (0, 0, 0, 0, 0, 0));
+    assert_eq!(xs.next().unwrap(), (0, 0, 0, 0, 0, 1));
+    assert_eq!(xs.last().unwrap(), (4, 4, 4, 4, 4, 4));
   }
 }
