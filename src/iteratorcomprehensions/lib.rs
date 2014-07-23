@@ -5,7 +5,7 @@
 
 #![feature(macro_rules,phase)]
 
-#![crate_id = "iteratorcomprehensions#0.2.0"]
+#![crate_name = "iteratorcomprehensions"]
 #![crate_type = "lib"]
 
 /**

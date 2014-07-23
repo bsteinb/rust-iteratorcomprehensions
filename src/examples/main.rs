@@ -1,6 +1,6 @@
 #![feature(phase)]
 
-#![crate_id = "examples"]
+#![crate_name = "examples"]
 
 #[cfg(not(test))]
 #[phase(plugin,link)]
