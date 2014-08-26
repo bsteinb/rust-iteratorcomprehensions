@@ -9,7 +9,7 @@ authors = [ "benedikt.steinbusch@googlemail.com" ]
 name = "examples"
 path = "src/examples/main.rs"
 
-[[lib]]
+[lib]
 
 name = "iteratorcomprehensions"
 path = "src/iteratorcomprehensions/lib.rs"
