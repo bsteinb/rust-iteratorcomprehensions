@@ -1,7 +1,5 @@
 #![feature(phase)]
 
-#![crate_name = "examples"]
-
 #[cfg(not(test))]
 #[phase(plugin,link)]
 extern crate iteratorcomprehensions;
