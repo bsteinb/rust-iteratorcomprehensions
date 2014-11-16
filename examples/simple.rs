@@ -1,13 +1,10 @@
 #![feature(phase)]
 
-#[cfg(not(test))]
 #[phase(plugin,link)]
 extern crate iteratorcomprehensions;
 
-#[cfg(not(test))]
 use std::fmt::{Show};
 
-#[cfg(not(test))]
 fn dump<T: Show, I: Iterator<T>>(it: I) {
   let mut it = it;
   it.next().map(|x| { print!("{}", x); });
@@ -17,7 +14,6 @@ fn dump<T: Show, I: Iterator<T>>(it: I) {
   println!("");
 }
 
-#[cfg(not(test))]
 fn main() {
   dump(iterator!(i for i in range(0i, 10i)));
 
