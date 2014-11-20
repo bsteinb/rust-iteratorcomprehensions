@@ -8,5 +8,6 @@ script:
   - cargo doc --verbose
 git:
   submodules: false
-after_script:
-  - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh
+after_success:
+  - mv target/doc doc
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh'
