@@ -1,7 +1,14 @@
 [package]
 name = "rust-iteratorcomprehensions"
-version = "0.3.0"
+version = "0.3.1"
 authors = [ "benedikt.steinbusch@googlemail.com" ]
+description = "A comprehension syntax for iterators implemented as macros."
+documentation = "http://www.rust-ci.org/bsteinb/rust-iteratorcomprehensions/doc/iteratorcomprehensions/"
+homepage = "https://github.com/bsteinb/rust-iteratorcomprehensions"
+repository = "https://github.com/bsteinb/rust-iteratorcomprehensions"
+readme = "README.md"
+keywords = ["macro"]
+license = "MIT"
 
 [lib]
 name = "iteratorcomprehensions"
