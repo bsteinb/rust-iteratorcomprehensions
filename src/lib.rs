@@ -35,7 +35,7 @@ pub mod macros {
     ) => (
       (arglist!($($vars),+), $var)
     );
-  )
+  );
 
   /**
     Main implementation of the `iterator!()` extension.
@@ -166,7 +166,7 @@ pub mod macros {
       $head
       .map(|arglist!($($envs),+)| { $map })
     );
-  )
+  );
 
   /**
     The `iterator!()` macro implements the following comprehension syntax:
@@ -223,7 +223,7 @@ pub mod macros {
         )
       )
     );
-  )
+  );
 }
 
 #[cfg(test)]
