@@ -317,4 +317,21 @@ mod tests {
     assert_eq!(xs.next().unwrap(), (0, 0, 0, 0, 0, 1));
     assert_eq!(xs.last().unwrap(), (4, 4, 4, 4, 4, 4));
   }
+
+  #[test]
+  fn pythagorean_triples_test() {
+    let triples = {
+      use std::iter::count;
+      iterator!(
+        (a, b, c)
+        for c in count(1u, 1u)
+        for a in range(1u, c)
+        for b in range(a, c)
+        if a * a + b * b == c * c
+      )
+    };
+    let xs: Vec<(uint, uint, uint)> = triples.take(3).collect();
+
+    assert_eq!(xs, vec!((3u, 4u, 5u), (6, 8, 10), (5, 12, 13)));
+  }
 }
