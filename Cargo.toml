@@ -1,6 +1,6 @@
 [package]
 name = "rust-iteratorcomprehensions"
-version = "0.3.2"
+version = "0.3.3"
 authors = [ "benedikt.steinbusch@googlemail.com" ]
 description = "A comprehension syntax for iterators implemented as macros."
 documentation = "http://www.rust-ci.org/bsteinb/rust-iteratorcomprehensions/doc/iteratorcomprehensions/"
