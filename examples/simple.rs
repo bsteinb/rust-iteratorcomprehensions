@@ -5,7 +5,7 @@ extern crate iteratorcomprehensions;
 
 use std::fmt::{Show};
 
-fn dump<T: Show, I: Iterator<T>>(it: I) {
+fn dump<I: Iterator>(it: I) where I::Item: Show {
   let mut it = it;
   it.next().map(|x| { print!("{}", x); });
   for x in it {

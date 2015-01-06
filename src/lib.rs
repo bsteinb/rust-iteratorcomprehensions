@@ -112,7 +112,7 @@ pub mod macros {
         (
           $head
           .flat_map(|arglist!($($envs),+)| {
-            ::std::iter::Repeat::new(arglist!($($envs),+)).zip($gen)
+            ::std::iter::repeat(arglist!($($envs),+)).zip($gen)
           })
         ),
         ($var $(, $envs)*),
@@ -142,7 +142,7 @@ pub mod macros {
         (
           $head
           .flat_map(|arglist!($($envs),+)| {
-            ::std::iter::Repeat::new(arglist!($($envs),+)).zip($gen)
+            ::std::iter::repeat(arglist!($($envs),+)).zip($gen)
           })
           .filter(|&arglist!($var $(, $envs)+)| { $filter })
         ),
