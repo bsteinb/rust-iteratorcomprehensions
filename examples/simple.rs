@@ -1,6 +1,4 @@
-#![feature(phase)]
-
-#[phase(plugin,link)]
+#[macro_use] #[no_link]
 extern crate iteratorcomprehensions;
 
 use std::fmt::{Show};

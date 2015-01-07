@@ -3,16 +3,14 @@
   nesting of iterators using a comprehension syntax.
 */
 
-#![feature(macro_rules,phase)]
-
 #![crate_name = "iteratorcomprehensions"]
 #![crate_type = "lib"]
 
 /**
   Contains the macros that implement the comprehension syntax.
 */
-pub mod macros {
-  #![macro_escape]
+#[macro_use]
+mod macros {
 
   /**
     Turns a comma separated list of identifiers into a nested tuple pattern.
@@ -24,7 +22,7 @@ pub mod macros {
     ```
   */
   #[macro_export]
-  macro_rules! arglist(
+  macro_rules! arglist {
     (
       $var:ident
     ) => (
@@ -34,14 +32,14 @@ pub mod macros {
       $var:ident $(, $vars:ident)+
     ) => (
       (arglist!($($vars),+), $var)
-    );
-  );
+    )
+  }
 
   /**
     Main implementation of the `iterator!()` extension.
   */
   #[macro_export]
-  macro_rules! iterator_tail(
+  macro_rules! iterator_tail {
     (
       (),
       (),
@@ -165,8 +163,8 @@ pub mod macros {
     ) => (
       $head
       .map(|arglist!($($envs),+)| { $map })
-    );
-  );
+    )
+  }
 
   /**
     The `iterator!()` macro implements the following comprehension syntax:
@@ -203,7 +201,7 @@ pub mod macros {
     ```
   */
   #[macro_export]
-  macro_rules! iterator(
+  macro_rules! iterator {
     (
       $map:expr
       $(
@@ -222,8 +220,8 @@ pub mod macros {
           )+
         )
       )
-    );
-  );
+    )
+  }
 }
 
 #[cfg(test)]
